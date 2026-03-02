@@ -3,257 +3,305 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Experyment - Modern Bento Grid</title>
+    <title>Experyment Gdynia - Modern Grid Layout</title>
     <style>
-        /* RESET */
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 40px; }
+        /* --- RESET & BASE STYLES --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            background-color: #f4f4f9; 
+            color: #333;
+            padding: 40px;
+        }
 
-        h3 { margin-bottom: 20px; color: #333; }
+        /* HEADER SIMULATION */
+        header {
+            max-width: 1200px;
+            margin: 0 auto 30px auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+        h1 { font-size: 1.8rem; color: #111; font-weight: 800; letter-spacing: -1px; }
+        .sub-header { color: #666; font-size: 0.9rem; }
 
-        /* BENTO GRID CONTAINER */
-        .bento-grid {
+        /* --- BENTO GRID LAYOUT --- */
+        .grid-container {
             display: grid;
-            /* 3 columns on desktop */
-            grid-template-columns: repeat(3, 1fr); 
-            /* Auto rows */
-            grid-auto-rows: 250px; 
-            gap: 20px;
+            grid-template-columns: repeat(3, 1fr); /* 3 Equal Columns */
+            grid-template-rows: repeat(2, 280px); /* 2 Rows of fixed height */
+            gap: 24px;
             max-width: 1200px;
             margin: 0 auto;
         }
 
-        /* CARD STYLES */
+        /* --- CARD BASE --- */
         .card {
             background: white;
             border-radius: 24px;
-            padding: 25px;
-            position: relative;
             overflow: hidden;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            border: 1px solid rgba(0,0,0,0.05);
+            justify-content: flex-end; /* Text at bottom */
         }
 
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
         }
 
-        /* TYPOGRAPHY */
-        .card h4 { font-size: 1.2rem; margin-bottom: 5px; color: #333; }
-        .card p { font-size: 0.9rem; color: #666; }
-        .tag { 
-            font-size: 0.7rem; font-weight: bold; text-transform: uppercase; 
-            letter-spacing: 1px; color: #888; margin-bottom: 10px; display: block;
+        /* Text Content Styling inside cards */
+        .card-content {
+            position: relative;
+            z-index: 10;
+            padding: 30px;
+            pointer-events: none; /* Let clicks pass through to animation if needed */
         }
 
-        /* --- THE FEATURED CARD (WATER) --- */
-        .card.featured {
-            /* Spans 2 columns and 2 rows (BIG) */
-            grid-column: span 2; 
-            grid-row: span 2;
+        .tag {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(5px);
+        }
+
+        h2 { font-size: 2rem; margin-bottom: 10px; line-height: 1.1; }
+        h3 { font-size: 1.4rem; margin-bottom: 8px; color: #333; }
+        p { font-size: 1rem; opacity: 0.9; line-height: 1.5; }
+
+        /* --- 1. FEATURE CARD: PHYSICS (The Network) --- */
+        .card.physics-hero {
+            grid-column: span 2; /* Takes 2 columns */
+            grid-row: span 2;    /* Takes 2 rows (BIG) */
+            background: #0b0f19; /* Deep Space Black */
+            color: white;
+        }
+        .card.physics-hero h2 { font-size: 3rem; background: linear-gradient(to right, #fff, #a29bfe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .card.physics-hero p { color: #a29bfe; max-width: 400px; }
+        .card.physics-hero .tag { color: #a29bfe; border: 1px solid rgba(162, 155, 254, 0.3); }
+
+        /* Canvas for Physics */
+        canvas#physicsCanvas {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
+        }
+
+
+        /* --- 2. SECONDARY CARD: OCEAN (Water) --- */
+        .card.ocean-tall {
+            grid-column: span 1; /* Takes 1 column */
+            grid-row: span 2;    /* Takes 2 rows (Tall sidebar) */
             background: linear-gradient(to bottom, #001e36, #000);
             color: white;
-            justify-content: flex-end; /* Text at bottom */
-            border: 1px solid #004e7a;
+            border: 1px solid #003366;
         }
+        .card.ocean-tall h2 { font-size: 2.2rem; background: linear-gradient(to right, #fff, #00d2ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .card.ocean-tall p { color: #89cff0; }
+        .card.ocean-tall .tag { color: #00d2ff; border: 1px solid rgba(0, 210, 255, 0.3); }
 
-        .card.featured h4 { color: white; font-size: 2.5rem; }
-        .card.featured p { color: #ccc; font-size: 1.1rem; max-width: 80%; }
-        .card.featured .tag { color: #00d2ff; }
-
-        /* ANIMATION FOR WATER (Scoped) */
-        .water-fx {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 0; pointer-events: none;
-        }
-        .card.featured .content { position: relative; z-index: 2; }
-        
+        /* Ocean Animation Layers */
+        .bubbles-container { position: absolute; top:0; left:0; width:100%; height:100%; z-index: 1; pointer-events: none; }
         .bubble {
             position: absolute; bottom: -20px;
-            background: rgba(255, 255, 255, 0.3); border-radius: 50%;
-            width: var(--size); height: var(--size); left: var(--left);
-            animation: rise var(--duration) ease-in infinite;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            animation: rise 8s infinite ease-in;
         }
         @keyframes rise {
-            0% { bottom: -20px; opacity: 0; }
-            50% { opacity: 0.8; }
-            100% { bottom: 110%; opacity: 0; }
+            0% { bottom: -20px; opacity: 0; transform: translateX(0); }
+            50% { opacity: 0.6; }
+            100% { bottom: 100%; opacity: 0; transform: translateX(20px); }
         }
 
-        /* RESPONSIVE: On mobile, everything is 1 column */
-        @media (max-width: 768px) {
-            .bento-grid { grid-template-columns: 1fr; grid-auto-rows: auto; }
-            .card.featured { grid-column: span 1; grid-row: span 1; min-height: 400px; }
-            .card { min-height: 200px; }
+
+        /* --- 3. STATIC CARDS (Standard) --- */
+        .card.static {
+            grid-column: span 1;
+            grid-row: span 1; /* Standard square size */
+            background: white;
+            color: #222;
+            justify-content: space-between;
+            border: 1px solid #e0e0e0;
+        }
+        .card.static .card-content { color: #333; padding: 25px; }
+        .card.static .tag { background: #eee; color: #555; }
+        .card.static p { color: #666; font-size: 0.9rem; }
+        
+        /* Fake Image Top for Static Cards */
+        .img-placeholder {
+            width: 100%;
+            height: 140px;
+            background: #eee;
+            display: flex; align-items: center; justify-content: center;
+            color: #999; font-weight: bold; font-size: 0.9rem;
+        }
+
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 900px) {
+            .grid-container { grid-template-columns: 1fr; grid-template-rows: auto; }
+            .card.physics-hero { grid-column: span 1; height: 400px; }
+            .card.ocean-tall { grid-column: span 1; height: 350px; }
+            .card.static { height: 300px; }
         }
     </style>
 </head>
 <body>
 
-    <h3>Exhibitions & News (Bento Layout)</h3>
+    <header>
+        <div>
+            <h1>EXPERYMENT GDYNIA</h1>
+            <div class="sub-header">Science Centre • Exhibitions • Events</div>
+        </div>
+    </header>
 
-    <div class="bento-grid">
+    <!-- THE BENTO GRID -->
+    <div class="grid-container">
 
-        <!-- 1. FEATURED ANIMATED CARD (Big) -->
-        <div class="card featured">
-            <div class="water-fx" id="water-fx"></div>
-            <div class="content">
-                <span class="tag">Main Exhibition</span>
-                <h4>Tajemnice Głębin</h4>
-                <p>Dive into the abyss. Experience the crushing pressure and beautiful light of the deep ocean.</p>
+        <!-- 1. HERO: PHYSICS (Animated Network) -->
+        <div class="card physics-hero">
+            <canvas id="physicsCanvas"></canvas>
+            <div class="card-content">
+                <span class="tag">New Exhibition</span>
+                <h2>INVISIBLE FORCES</h2>
+                <p>Interactive Physics Laboratory. Discover the connections that hold the universe together.</p>
             </div>
         </div>
 
-        <!-- PHYSICS CARD (Standard Size or Wide) -->
-<div class="card physics-theme" style="grid-column: span 2; position: relative; overflow: hidden; background: #0b0f19; color: white;">
-    
-    <!-- The Canvas for the Animation -->
-    <canvas id="physicsCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;"></canvas>
+        <!-- 2. SECONDARY: OCEAN (Animated Water) -->
+        <div class="card ocean-tall">
+            <div class="bubbles-container" id="bubbles"></div>
+            <div class="card-content">
+                <span class="tag">Featured</span>
+                <h2>TAJEMNICE<br>GŁĘBIN</h2>
+                <p>Dive into the abyss. Experience the pressure of the deep.</p>
+            </div>
+        </div>
 
-    <!-- Content on top -->
-    <div style="position: relative; z-index: 2; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 30px; pointer-events: none;">
-        <span class="tag" style="color: #7b61ff; border-color: #7b61ff;">Interactive Lab</span>
-        <h4 style="font-size: 2rem; color: #fff; margin-bottom: 10px;">Forces & Motion</h4>
-        <p style="color: #a0a0b0; max-width: 60%;">
-            Explore the fundamental laws of the universe. From atomic structures to galactic gravity.
-        </p>
-    </div>
-</div>
+        <!-- 3. STATIC: News -->
+        <div class="card static">
+            <div class="img-placeholder">IMAGE (JPG)</div>
+            <div class="card-content">
+                <span class="tag">News</span>
+                <h3>Workshops</h3>
+                <p>Weekend chemistry classes for children aged 7-12.</p>
+            </div>
+        </div>
 
-<script>
-    // PHYSICS ANIMATION SCRIPT
-    (function(){
-        const canvas = document.getElementById('physicsCanvas');
-        const ctx = canvas.getContext('2d');
-        let width, height;
-        let particles = [];
-
-        // Configuration
-        const particleCount = 60; // Number of atoms
-        const connectionDistance = 100; // Distance to draw line
-        const moveSpeed = 0.5;
-
-        // Resize handling
-        function resize() {
-            width = canvas.width = canvas.offsetWidth;
-            height = canvas.height = canvas.offsetHeight;
-        }
-        window.addEventListener('resize', resize);
-        resize();
-
-        // Particle Class
-        class Particle {
-            constructor() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * moveSpeed;
-                this.vy = (Math.random() - 0.5) * moveSpeed;
-                this.size = Math.random() * 2 + 1;
-            }
-
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-
-                // Bounce off walls
-                if (this.x < 0 || this.x > width) this.vx *= -1;
-                if (this.y < 0 || this.y > height) this.vy *= -1;
-            }
-
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = 'rgba(123, 97, 255, 0.7)'; // Purple physics color
-                ctx.fill();
-            }
-        }
-
-        // Initialize
-        for (let i = 0; i < particleCount; i++) {
-            particles.push(new Particle());
-        }
-
-        // Animation Loop
-        function animate() {
-            ctx.clearRect(0, 0, width, height);
-            
-            // Update and draw particles
-            particles.forEach((p, index) => {
-                p.update();
-                p.draw();
-
-                // Draw Connections (The "Physics" part)
-                for (let j = index + 1; j < particles.length; j++) {
-                    const p2 = particles[j];
-                    const dx = p.x - p2.x;
-                    const dy = p.y - p2.y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-
-                    if (distance < connectionDistance) {
-                        ctx.beginPath();
-                        ctx.strokeStyle = `rgba(123, 97, 255, ${1 - distance/connectionDistance})`;
-                        ctx.lineWidth = 1;
-                        ctx.moveTo(p.x, p.y);
-                        ctx.lineTo(p2.x, p2.y);
-                        ctx.stroke();
-                    }
-                }
-            });
-
-            requestAnimationFrame(animate);
-        }
-
-        animate();
-    })();
-</script>
-
-        <!-- 3. STANDARD CARD -->
-        <div class="card">
-            <div>
+        <!-- 4. STATIC: Event -->
+        <div class="card static">
+            <div class="img-placeholder">IMAGE (JPG)</div>
+            <div class="card-content">
                 <span class="tag">Event</span>
-                <h4>Night at the Museum</h4>
+                <h3>Adult Night</h3>
+                <p>Science after dark. Cocktails and experiments.</p>
             </div>
-            <p>Visit Experyment after dark. Adults only.</p>
         </div>
 
-        <!-- 4. WIDE STANDARD CARD -->
-        <div class="card" style="background: #e3f2fd;">
-            <div>
-                <span class="tag" style="color: #007bff">News</span>
-                <h4>New Ticket System</h4>
+        <!-- 5. STATIC: Info -->
+        <div class="card static">
+            <div class="img-placeholder">IMAGE (JPG)</div>
+            <div class="card-content">
+                <span class="tag">Info</span>
+                <h3>Opening Hours</h3>
+                <p>We are open daily from 09:00 to 18:00.</p>
             </div>
-            <p>We have updated our online booking system for faster checkout.</p>
-        </div>
-
-         <!-- 5. STANDARD CARD -->
-         <div class="card">
-            <div>
-                <span class="tag">Lecture</span>
-                <h4>Space Travel</h4>
-            </div>
-            <p>Guest lecture by ESA astronaut.</p>
         </div>
 
     </div>
 
+    <!-- SCRIPTS -->
     <script>
-        // Bubble Logic
-        const container = document.getElementById('water-fx');
-        for(let i=0; i<30; i++) {
-            let b = document.createElement('div');
-            b.className = 'bubble';
-            b.style.setProperty('--size', Math.random()*15+5+'px');
-            b.style.setProperty('--left', Math.random()*100+'%');
-            b.style.setProperty('--duration', Math.random()*5+5+'s');
-            b.style.animationDelay = Math.random()*5+'s';
-            container.appendChild(b);
-        }
-    </script>
+        /* --- 1. PHYSICS NETWORK SCRIPT --- */
+        (function() {
+            const canvas = document.getElementById('physicsCanvas');
+            const ctx = canvas.getContext('2d');
+            let w, h, particles = [];
+            const particleCount = 80;
+            const connectionDist = 120;
 
+            function resize() {
+                w = canvas.width = canvas.offsetWidth;
+                h = canvas.height = canvas.offsetHeight;
+            }
+            window.addEventListener('resize', resize);
+            resize(); // Init size
+
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * w;
+                    this.y = Math.random() * h;
+                    this.vx = (Math.random() - 0.5) * 0.8;
+                    this.vy = (Math.random() - 0.5) * 0.8;
+                    this.size = Math.random() * 2;
+                }
+                update() {
+                    this.x += this.vx; 
+                    this.y += this.vy;
+                    if(this.x < 0 || this.x > w) this.vx *= -1;
+                    if(this.y < 0 || this.y > h) this.vy *= -1;
+                }
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+                    ctx.fillStyle = '#a29bfe';
+                    ctx.fill();
+                }
+            }
+
+            for(let i=0; i<particleCount; i++) particles.push(new Particle());
+
+            function animate() {
+                ctx.clearRect(0,0,w,h);
+                particles.forEach((p, index) => {
+                    p.update();
+                    p.draw();
+                    // Draw connections
+                    for(let j=index+1; j<particles.length; j++){
+                        let p2 = particles[j];
+                        let dx = p.x - p2.x;
+                        let dy = p.y - p2.y;
+                        let dist = Math.sqrt(dx*dx + dy*dy);
+                        if(dist < connectionDist){
+                            ctx.beginPath();
+                            ctx.strokeStyle = `rgba(162, 155, 254, ${1 - dist/connectionDist})`;
+                            ctx.lineWidth = 0.5;
+                            ctx.moveTo(p.x, p.y);
+                            ctx.lineTo(p2.x, p2.y);
+                            ctx.stroke();
+                        }
+                    }
+                });
+                requestAnimationFrame(animate);
+            }
+            animate();
+        })();
+
+        /* --- 2. OCEAN BUBBLE SCRIPT --- */
+        (function() {
+            const container = document.getElementById('bubbles');
+            const bubbleCount = 20;
+
+            for(let i=0; i<bubbleCount; i++){
+                let b = document.createElement('div');
+                b.className = 'bubble';
+                let size = Math.random() * 15 + 4 + 'px';
+                b.style.width = size;
+                b.style.height = size;
+                b.style.left = Math.random() * 100 + '%';
+                b.style.animationDuration = (Math.random() * 5 + 5) + 's';
+                b.style.animationDelay = (Math.random() * 5) + 's';
+                container.appendChild(b);
+            }
+        })();
+    </script>
 </body>
 </html>
