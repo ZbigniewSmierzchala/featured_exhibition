@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Experyment - Modern Bento Grid</title>
+    <style>
+        /* RESET */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; padding: 40px; }
+
+        h3 { margin-bottom: 20px; color: #333; }
+
+        /* BENTO GRID CONTAINER */
+        .bento-grid {
+            display: grid;
+            /* 3 columns on desktop */
+            grid-template-columns: repeat(3, 1fr); 
+            /* Auto rows */
+            grid-auto-rows: 250px; 
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* CARD STYLES */
+        .card {
+            background: white;
+            border-radius: 24px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        /* TYPOGRAPHY */
+        .card h4 { font-size: 1.2rem; margin-bottom: 5px; color: #333; }
+        .card p { font-size: 0.9rem; color: #666; }
+        .tag { 
+            font-size: 0.7rem; font-weight: bold; text-transform: uppercase; 
+            letter-spacing: 1px; color: #888; margin-bottom: 10px; display: block;
+        }
+
+        /* --- THE FEATURED CARD (WATER) --- */
+        .card.featured {
+            /* Spans 2 columns and 2 rows (BIG) */
+            grid-column: span 2; 
+            grid-row: span 2;
+            background: linear-gradient(to bottom, #001e36, #000);
+            color: white;
+            justify-content: flex-end; /* Text at bottom */
+            border: 1px solid #004e7a;
+        }
+
+        .card.featured h4 { color: white; font-size: 2.5rem; }
+        .card.featured p { color: #ccc; font-size: 1.1rem; max-width: 80%; }
+        .card.featured .tag { color: #00d2ff; }
+
+        /* ANIMATION FOR WATER (Scoped) */
+        .water-fx {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 0; pointer-events: none;
+        }
+        .card.featured .content { position: relative; z-index: 2; }
+        
+        .bubble {
+            position: absolute; bottom: -20px;
+            background: rgba(255, 255, 255, 0.3); border-radius: 50%;
+            width: var(--size); height: var(--size); left: var(--left);
+            animation: rise var(--duration) ease-in infinite;
+        }
+        @keyframes rise {
+            0% { bottom: -20px; opacity: 0; }
+            50% { opacity: 0.8; }
+            100% { bottom: 110%; opacity: 0; }
+        }
+
+        /* RESPONSIVE: On mobile, everything is 1 column */
+        @media (max-width: 768px) {
+            .bento-grid { grid-template-columns: 1fr; grid-auto-rows: auto; }
+            .card.featured { grid-column: span 1; grid-row: span 1; min-height: 400px; }
+            .card { min-height: 200px; }
+        }
+    </style>
+</head>
+<body>
+
+    <h3>Exhibitions & News (Bento Layout)</h3>
+
+    <div class="bento-grid">
+
+        <!-- 1. FEATURED ANIMATED CARD (Big) -->
+        <div class="card featured">
+            <div class="water-fx" id="water-fx"></div>
+            <div class="content">
+                <span class="tag">Main Exhibition</span>
+                <h4>Tajemnice Głębin</h4>
+                <p>Dive into the abyss. Experience the crushing pressure and beautiful light of the deep ocean.</p>
+            </div>
+        </div>
+
+        <!-- 2. STANDARD CARD -->
+        <div class="card">
+            <div>
+                <span class="tag">Workshop</span>
+                <h4>Chemistry 101</h4>
+            </div>
+            <p>Weekend workshops for kids aged 10-14.</p>
+        </div>
+
+        <!-- 3. STANDARD CARD -->
+        <div class="card">
+            <div>
+                <span class="tag">Event</span>
+                <h4>Night at the Museum</h4>
+            </div>
+            <p>Visit Experyment after dark. Adults only.</p>
+        </div>
+
+        <!-- 4. WIDE STANDARD CARD -->
+        <div class="card" style="background: #e3f2fd;">
+            <div>
+                <span class="tag" style="color: #007bff">News</span>
+                <h4>New Ticket System</h4>
+            </div>
+            <p>We have updated our online booking system for faster checkout.</p>
+        </div>
+
+         <!-- 5. STANDARD CARD -->
+         <div class="card">
+            <div>
+                <span class="tag">Lecture</span>
+                <h4>Space Travel</h4>
+            </div>
+            <p>Guest lecture by ESA astronaut.</p>
+        </div>
+
+    </div>
+
+    <script>
+        // Bubble Logic
+        const container = document.getElementById('water-fx');
+        for(let i=0; i<30; i++) {
+            let b = document.createElement('div');
+            b.className = 'bubble';
+            b.style.setProperty('--size', Math.random()*15+5+'px');
+            b.style.setProperty('--left', Math.random()*100+'%');
+            b.style.setProperty('--duration', Math.random()*5+5+'s');
+            b.style.animationDelay = Math.random()*5+'s';
+            container.appendChild(b);
+        }
+    </script>
+
+</body>
+</html>
